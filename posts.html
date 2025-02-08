@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <link rel="icon" href="piplup.png" type="image/png"> <!-- Website Icon -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 3px 0; /* Narrower header */
+            text-align: center;
+        }
+        .header-text {
+            background-color: #003366;
+            padding: 5px;
+            text-align: right;
+            color: white;
+            font-size: 12px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #003366;
+            text-align: center;
+        }
+        .dropdown {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .selected-items {
+            padding: 10px;
+            background-color: #eef4fa;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            min-height: 20px;
+            display: inline-block;
+            width: 80%;
+            line-height: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .toggle-btn, .apply-btn, .clear-btn {
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 10px 20px; /* Same style as Apply button */
+            cursor: pointer;
+            height: 40px; /* Button height matching Apply button */
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .toggle-btn:hover, .apply-btn:hover, .clear-btn:hover {
+            background-color: #00509e;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 10;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .dropdown-item {
+            padding: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .dropdown-item input {
+            margin-right: 10px;
+        }
+        .job-list {
+            margin-top: 20px;
+        }
+        .job-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #eef4fa;
+            border-left: 5px solid #003366;
+        }
+        .job-item h2 {
+            margin-top: 0;
+        }
+        .job-item p {
+            white-space: pre-wrap; /* For handling \\n as line breaks */
+        }
+        .job-count {
+            font-size: 14px;
+            color: #003366;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 20px;
+            padding: 10px;
+            background-color: #eef4fa;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-text">
+            made by ZHANG Xin®
+        </div>
+        <h1>Job Listings</h1>
+    </header>
+    <div class="container">
+        <h1>WIPO Posts Archive (not official)</h1>
+
+        <!-- Dropdown Menus -->
+        <div class="dropdown" id="occupational-group-dropdown">
+            <label for="occupational-group">Occupational Group</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="selected-items" id="occupational-group-selected">Select Occupational Group</div>
+                <button class="toggle-btn" id="toggle-occupational-group">Expand</button>
+            </div>
+            <div class="dropdown-menu" id="occupational-group-menu">
+                <!-- Options will be populated here -->
+            </div>
+        </div>
+
+        <div class="dropdown" id="grade-dropdown">
+            <label for="grade">Grade</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="selected-items" id="grade-selected">Select Grade</div>
+                <button class="toggle-btn" id="toggle-grade">Expand</button>
+            </div>
+            <div class="dropdown-menu" id="grade-menu">
+                <!-- Options will be populated here -->
+            </div>
+        </div>
+
+        <div class="dropdown" id="location-dropdown">
+            <label for="location">Location</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="selected-items" id="location-selected">Select Location</div>
+                <button class="toggle-btn" id="toggle-location">Expand</button>
+            </div>
+            <div class="dropdown-menu" id="location-menu">
+                <!-- Options will be populated here -->
+            </div>
+        </div>
+
+        <div class="dropdown" id="title-dropdown">
+            <label for="title">Title</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="selected-items" id="title-selected">Select Title</div>
+                <button class="toggle-btn" id="toggle-title">Expand</button>
+            </div>
+            <div class="dropdown-menu" id="title-menu">
+                <!-- Options will be populated here -->
+            </div>
+        </div>
+
+        <!-- Instructions -->
+		<div class="instructions">
+            <p>大家可以通过"Occupational Group"筛选岗位类别，"Grade"筛选岗位级别，每个下拉项可单独筛选也可任意组合筛选。<br>"Title"为具体岗位名称，推荐需要精确搜索参考时使用。</p>
+        </div>
+
+        <!-- Buttons and Job Count -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <button class="apply-btn" id="apply-button">Apply</button>
+                <button class="clear-btn" id="clear-button">Clear Selections</button>
+            </div>
+            <div class="job-count" id="job-count">0 jobs found</div>
+        </div>
+
+        <!-- Job List Display -->
+        <div class="job-list" id="job-list">
+            <h2>Job Results</h2>
+            <p>Select criteria and click "Apply" to search for job posts.</p>
+        </div>
+    </div>
+
+    <script>
+        // Fetch JSON data from the file
+        fetch('posts.json')
+            .then(response => response.json())
+            .then(jobs => {
+                // Populate dropdowns with checkboxes
+                function populateDropdown(id, key, isArray = false) {
+                    const dropdownMenu = document.getElementById(`${id}-menu`);
+                    const selectedItemsContainer = document.getElementById(`${id}-selected`);
+                    const uniqueValues = [...new Set(jobs.flatMap(job => isArray ? job[key] || [] : [job[key]]))].filter(Boolean);
+                    uniqueValues.sort(); // Sort values for better usability
+
+                    uniqueValues.forEach(value => {
+                        const item = document.createElement('div');
+                        item.classList.add('dropdown-item');
+                        item.innerHTML = `<input type="checkbox" id="${id}-${value}" value="${value}"><label for="${id}-${value}">${value}</label>`;
+                        dropdownMenu.appendChild(item);
+
+                        // Add event listener for checkbox
+                        const checkbox = item.querySelector('input');
+                        checkbox.addEventListener('change', () => {
+                            updateSelectedItems(id, selectedItemsContainer);
+                        });
+                    });
+                }
+
+                // Update the selected items displayed in the dropdown
+                function updateSelectedItems(id, selectedItemsContainer) {
+                    const checkboxes = document.querySelectorAll(`#${id}-menu input[type="checkbox"]:checked`);
+                    selectedItemsContainer.innerHTML = '';
+                    const selectedValues = Array.from(checkboxes).map(checkbox => checkbox.value);
+                    selectedItemsContainer.textContent = selectedValues.length > 0 ? selectedValues.join(', ') : `Select ${id.replace('-', ' ').toUpperCase()}`;
+
+                    // If the text is too long, trim and add ellipsis
+                    if (selectedItemsContainer.scrollWidth > selectedItemsContainer.clientWidth) {
+                        selectedItemsContainer.textContent = selectedValues.join(', ').slice(0, 50) + '...';
+                    }
+                }
+
+                populateDropdown('occupational-group', 'Occupational Groups', true);
+                populateDropdown('grade', 'Grade Short');
+                populateDropdown('location', 'Location');
+                populateDropdown('title', 'Title');
+
+                // Toggle dropdown visibility
+                function toggleDropdown(id) {
+                    const dropdownMenu = document.getElementById(`${id}-menu`);
+                    const toggleButton = document.getElementById(`toggle-${id}`);
+                    if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                        dropdownMenu.style.display = 'block';
+                        toggleButton.textContent = 'Collapse';
+                    } else {
+                        dropdownMenu.style.display = 'none';
+                        toggleButton.textContent = 'Expand';
+                    }
+                }
+
+                // Add event listeners for toggle buttons
+                document.getElementById('toggle-occupational-group').addEventListener('click', () => toggleDropdown('occupational-group'));
+                document.getElementById('toggle-grade').addEventListener('click', () => toggleDropdown('grade'));
+                document.getElementById('toggle-location').addEventListener('click', () => toggleDropdown('location'));
+                document.getElementById('toggle-title').addEventListener('click', () => toggleDropdown('title'));
+
+                // Filter jobs based on selected criteria
+                function filterJobs() {
+                    const selectedTitle = Array.from(document.querySelectorAll('#title-menu input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+                    const selectedLocation = Array.from(document.querySelectorAll('#location-menu input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+                    const selectedGrade = Array.from(document.querySelectorAll('#grade-menu input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+                    const selectedOccupationalGroup = Array.from(document.querySelectorAll('#occupational-group-menu input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+
+                    // Check if at least one criterion is selected
+                    if (!selectedTitle.length && !selectedLocation.length && !selectedGrade.length && !selectedOccupationalGroup.length) {
+                        alert('Please select at least one category to search.');
+                        return;
+                    }
+
+                    const filteredJobs = jobs.filter(job => {
+                        return (
+                            (selectedTitle.length === 0 || selectedTitle.includes(job.Title)) &&
+                            (selectedLocation.length === 0 || selectedLocation.includes(job.Location)) &&
+                            (selectedGrade.length === 0 || selectedGrade.includes(job['Grade Short'])) &&
+                            (selectedOccupationalGroup.length === 0 || (job['Occupational Groups'] && job['Occupational Groups'].some(group => selectedOccupationalGroup.includes(group))))
+                        );
+                    });
+
+                    displayJobs(filteredJobs);
+                }
+
+                // Display filtered jobs
+                function displayJobs(filteredJobs) {
+                    const jobList = document.getElementById('job-list');
+                    const jobCount = document.getElementById('job-count');
+                    jobList.innerHTML = '';
+
+                    jobCount.textContent = `${filteredJobs.length} jobs found`;
+
+                    if (filteredJobs.length === 0) {
+                        jobList.innerHTML = '<p>No jobs found matching your criteria.</p>';
+                        return;
+                    }
+
+                    filteredJobs.forEach(job => {
+                        const jobItem = document.createElement('div');
+                        jobItem.classList.add('job-item');
+
+                        jobItem.innerHTML = `
+                            <h2>${job.Title}</h2>
+                            <p><strong>ID:</strong> ${job.ID || 'N/A'}</p>
+                            <p><strong>Organization:</strong> ${job.Organization}</p>
+                            <p><strong>Location:</strong> ${job.Location}</p>
+                            <p><strong>Grade:</strong> ${job['Grade Short']}</p>
+                            <p><strong>Occupational Groups:</strong> ${job['Occupational Groups'].join(', ')}</p>
+                            <p>${job['Job Content']}</p>
+                        `;
+
+                        jobList.appendChild(jobItem);
+                    });
+                }
+
+                document.getElementById('apply-button').addEventListener('click', filterJobs);
+
+                // Clear Selections functionality
+                document.getElementById('clear-button').addEventListener('click', function() {
+                    document.querySelectorAll('.dropdown-menu input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+                    document.querySelectorAll('.selected-items').forEach(container => container.innerHTML = 'Select ' + container.id.replace('-selected', '').replace('-', ' ').toUpperCase());
+                    document.getElementById('job-list').innerHTML = '<h2>Job Results</h2><p>Select criteria and click "Apply" to search for job posts.</p>';
+                    document.getElementById('job-count').textContent = '0 jobs found';
+                });
+            })
+            .catch(error => console.error('Error loading JSON:', error));
+    </script>
+</body>
+</html>
